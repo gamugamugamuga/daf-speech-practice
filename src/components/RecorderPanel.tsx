@@ -31,7 +31,7 @@ export function RecorderPanel({ language, inputDeviceId, outputDeviceId }: Recor
         <div className="flex items-center justify-between gap-3">
           <span
             className={`rounded-md px-3 py-1.5 text-xs font-bold ${
-              isRecording ? 'bg-coral/25 text-[#8b321f]' : 'bg-paper text-moss'
+              isRecording ? 'bg-coral/25 text-[#ffb7a5]' : 'bg-white/8 text-moss'
             }`}
           >
             {isRecording ? t.recording : recorder.audioUrl ? t.play : t.noRecording}
@@ -62,13 +62,13 @@ export function RecorderPanel({ language, inputDeviceId, outputDeviceId }: Recor
             {t.play}
           </audio>
         ) : (
-          <div className="grid h-14 place-items-center rounded-md border border-dashed border-black/15 bg-paper/60 text-sm font-semibold text-moss">
+          <div className="grid h-14 place-items-center rounded-md border border-dashed border-white/15 bg-white/[0.04] text-sm font-semibold text-moss">
             {t.noRecording}
           </div>
         )}
 
         {recorder.error ? (
-          <p className="rounded-md bg-coral/15 px-3 py-2 text-sm font-semibold text-[#8b321f]">{t.recorderError}</p>
+          <p className="rounded-md bg-coral/15 px-3 py-2 text-sm font-semibold text-[#ffb7a5]">{t.recorderError}</p>
         ) : null}
       </div>
     </Panel>

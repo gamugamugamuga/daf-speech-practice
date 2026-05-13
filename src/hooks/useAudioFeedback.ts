@@ -6,9 +6,29 @@ type AudioFeedbackOptions = {
   outputDeviceId: string;
   delayMs: number;
   volume: number;
+  holdToDafEnabled: boolean;
+  isHoldKeyPressed: boolean;
+  fadeMs: number;
 };
 
-export function useAudioFeedback({ inputDeviceId, outputDeviceId, delayMs, volume }: AudioFeedbackOptions) {
+const rampGain = (gain: GainNode, targetValue: number, fadeMs: number) => {
+  const now = gain.context.currentTime;
+  const fadeSeconds = Math.max(0.05, Math.min(0.15, fadeMs / 1000));
+
+  gain.gain.cancelScheduledValues(now);
+  gain.gain.setValueAtTime(gain.gain.value, now);
+  gain.gain.linearRampToValueAtTime(targetValue, now + fadeSeconds);
+};
+
+export function useAudioFeedback({
+  inputDeviceId,
+  outputDeviceId,
+  delayMs,
+  volume,
+  holdToDafEnabled,
+  isHoldKeyPressed,
+  fadeMs,
+}: AudioFeedbackOptions) {
   const [isActive, setIsActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -16,6 +36,7 @@ export function useAudioFeedback({ inputDeviceId, outputDeviceId, delayMs, volum
   const delayRef = useRef<DelayNode | null>(null);
   const gainRef = useRef<GainNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const isOutputEnabled = !holdToDafEnabled || isHoldKeyPressed;
 
   const stop = useCallback(async () => {
     sourceRef.current?.disconnect();
@@ -55,7 +76,7 @@ export function useAudioFeedback({ inputDeviceId, outputDeviceId, delayMs, volum
       const gain = audioContext.createGain();
 
       delay.delayTime.value = delayMs / 1000;
-      gain.gain.value = volume;
+      gain.gain.value = isOutputEnabled ? volume : 0;
 
       source.connect(delay);
       delay.connect(gain);
@@ -71,7 +92,7 @@ export function useAudioFeedback({ inputDeviceId, outputDeviceId, delayMs, volum
       setError(cause instanceof Error ? cause.message : 'microphone_error');
       setIsActive(false);
     }
-  }, [delayMs, inputDeviceId, outputDeviceId, volume]);
+  }, [delayMs, inputDeviceId, isOutputEnabled, outputDeviceId, volume]);
 
   useEffect(() => {
     if (delayRef.current) {
@@ -81,9 +102,9 @@ export function useAudioFeedback({ inputDeviceId, outputDeviceId, delayMs, volum
 
   useEffect(() => {
     if (gainRef.current) {
-      gainRef.current.gain.setTargetAtTime(volume, gainRef.current.context.currentTime, 0.015);
+      rampGain(gainRef.current, isOutputEnabled ? volume : 0, fadeMs);
     }
-  }, [volume]);
+  }, [fadeMs, isOutputEnabled, volume]);
 
   useEffect(() => {
     if (audioContextRef.current) {
@@ -97,5 +118,5 @@ export function useAudioFeedback({ inputDeviceId, outputDeviceId, delayMs, volum
     };
   }, [stop]);
 
-  return { isActive, error, start, stop };
+  return { isActive, error, isOutputEnabled: isActive && isOutputEnabled, start, stop };
 }

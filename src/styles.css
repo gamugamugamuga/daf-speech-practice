@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  color: #17201c;
-  background: #f7f5ef;
+  color: #edf5f0;
+  background: #071013;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -25,5 +25,5 @@ textarea {
 }
 
 input[type='range'] {
-  accent-color: #2f795d;
+  accent-color: #8febca;
 }

@@ -7,6 +7,7 @@ import { Notice } from './components/Notice';
 import { PracticeTextPanel } from './components/PracticeTextPanel';
 import { RecorderPanel } from './components/RecorderPanel';
 import { defaultPracticeText, practiceLibrary } from './i18n';
+import { useInputBindingService } from './hooks/useInputBindingService';
 import { useStoredSettings } from './hooks/useStoredSettings';
 import type { Language, PracticeCategory } from './types';
 
@@ -16,6 +17,12 @@ export function App() {
   const updateSetting = <Key extends keyof typeof settings>(key: Key, value: (typeof settings)[Key]) => {
     setSettings((current) => ({ ...current, [key]: value }));
   };
+
+  const inputBinding = useInputBindingService({
+    enabled: settings.holdToDafEnabled,
+    holdKeyCode: settings.holdKeyCode,
+    onHoldKeyCodeChange: (code) => updateSetting('holdKeyCode', code),
+  });
 
   const changeLanguage = (language: Language) => {
     setSettings((current) => ({
@@ -55,7 +62,7 @@ export function App() {
   }, [settings.language]);
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#d7f2e6_0,#f7f5ef_32%,#f7f5ef_100%)] px-8 py-7">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,#183a34_0,#071013_34%,#05090b_100%)] px-8 py-7">
       <div className="mx-auto grid max-w-7xl gap-6">
         <Header language={settings.language} onLanguageChange={changeLanguage} />
         <Notice language={settings.language} />
@@ -75,8 +82,23 @@ export function App() {
               outputDeviceId={settings.outputDeviceId}
               delayMs={settings.delayMs}
               volume={settings.feedbackVolume}
+              holdToDafEnabled={settings.holdToDafEnabled}
+              holdKeyCode={settings.holdKeyCode}
+              formattedHoldKey={inputBinding.formattedHoldKey}
+              fadeMs={settings.fadeMs}
+              isHoldKeyPressed={inputBinding.isHoldKeyPressed}
+              isRecordingKey={inputBinding.isRecordingKey}
+              hasCompetingKeyWarning={inputBinding.hasCompetingKeyWarning}
+              isFootPedalFriendly={inputBinding.isFootPedalFriendly}
+              isGlobalInputAvailable={inputBinding.isGlobalInputAvailable}
+              isGlobalInputMapped={inputBinding.isGlobalInputMapped}
               onDelayChange={(value) => updateSetting('delayMs', value)}
               onVolumeChange={(value) => updateSetting('feedbackVolume', value)}
+              onHoldToDafEnabledChange={(value) => updateSetting('holdToDafEnabled', value)}
+              onFadeChange={(value) => updateSetting('fadeMs', value)}
+              onHoldKeyChange={(value) => updateSetting('holdKeyCode', value)}
+              onStartKeyRecording={inputBinding.startKeyRecording}
+              onCancelKeyRecording={inputBinding.cancelKeyRecording}
             />
             <PracticeTextPanel
               language={settings.language}

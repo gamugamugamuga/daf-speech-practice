@@ -10,6 +10,9 @@ export type AppSettings = {
   outputDeviceId: string;
   delayMs: number;
   feedbackVolume: number;
+  holdToDafEnabled: boolean;
+  holdKeyCode: string;
+  fadeMs: number;
   bpm: number;
   metronomeTone: MetronomeTone;
   practiceCategory: PracticeCategory;

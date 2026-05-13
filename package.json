@@ -14,7 +14,8 @@
   "dependencies": {
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "uiohook-napi": "^1.5.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
@@ -35,6 +36,11 @@
   "build": {
     "appId": "jp.local.speechpractice.daf",
     "productName": "DAF Speech Practice",
+    "npmRebuild": false,
+    "asarUnpack": [
+      "node_modules/uiohook-napi/prebuilds/**/*",
+      "node_modules/uiohook-napi/build/Release/**/*.node"
+    ],
     "directories": {
       "output": "release"
     },
@@ -42,12 +48,16 @@
       {
         "from": "dist",
         "to": "dist",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       {
         "from": "dist-electron",
         "to": "dist-electron",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       },
       "package.json"
     ],

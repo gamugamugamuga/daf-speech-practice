@@ -59,7 +59,7 @@ export function PracticeTextPanel({
         </Button>
       </div>
       <textarea
-        className="min-h-72 w-full resize-y rounded-lg border border-black/10 bg-paper/70 p-5 text-lg font-semibold leading-9 text-ink outline-none transition placeholder:text-moss/60 focus:border-[#2f795d] focus:bg-white focus:ring-4 focus:ring-mint/45"
+        className="min-h-72 w-full resize-y rounded-lg border border-white/10 bg-[#0b1418] p-5 text-lg font-semibold leading-9 text-ink outline-none transition placeholder:text-moss/60 focus:border-mint focus:ring-4 focus:ring-mint/20"
         placeholder={t.textPlaceholder}
         value={text}
         onChange={(event) => onTextChange(event.target.value)}

@@ -66,7 +66,7 @@ export function AudioSettingsPanel({
       </div>
 
       {devices.error ? (
-        <p className="mt-4 rounded-md bg-coral/15 px-3 py-2 text-sm font-semibold text-[#8b321f]">{devices.error}</p>
+        <p className="mt-4 rounded-md bg-coral/15 px-3 py-2 text-sm font-semibold text-[#ffb7a5]">{devices.error}</p>
       ) : null}
     </Panel>
   );

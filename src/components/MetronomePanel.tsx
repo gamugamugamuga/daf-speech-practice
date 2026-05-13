@@ -34,14 +34,14 @@ export function MetronomePanel({ language, bpm, tone, outputDeviceId, onBpmChang
           </SelectField>
         </div>
 
-        <div className="rounded-lg bg-paper/70 p-3">
+        <div className="rounded-lg bg-white/[0.04] p-3">
           <div className="mb-2 text-xs font-black uppercase tracking-normal text-moss">{t.recommendedBpm}</div>
           <div className="grid grid-cols-5 gap-2">
             {bpmPresets.map((preset) => (
               <button
                 key={preset}
                 className={`rounded-md px-2 py-2 text-left transition ${
-                  bpm === preset ? 'bg-ink text-white' : 'bg-white text-ink hover:bg-mint/40'
+                  bpm === preset ? 'bg-mint text-[#061412]' : 'bg-white/8 text-ink hover:bg-white/12'
                 }`}
                 type="button"
                 onClick={() => onBpmChange(preset)}
@@ -55,7 +55,7 @@ export function MetronomePanel({ language, bpm, tone, outputDeviceId, onBpmChang
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-black/10 pt-4">
+        <div className="flex items-center justify-between border-t border-white/10 pt-4">
           <div className="flex items-end gap-2">
             <span className="text-4xl font-black tabular-nums text-ink">{bpm}</span>
             <span className="pb-1 text-sm font-bold text-moss">{t.bpm}</span>
