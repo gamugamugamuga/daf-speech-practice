@@ -6,13 +6,18 @@ import { MetronomePanel } from './components/MetronomePanel';
 import { Notice } from './components/Notice';
 import { PracticeTextPanel } from './components/PracticeTextPanel';
 import { RecorderPanel } from './components/RecorderPanel';
+import { VerificationPanel } from './components/VerificationPanel';
 import { defaultPracticeText, practiceLibrary } from './i18n';
 import { useInputBindingService } from './hooks/useInputBindingService';
 import { useStoredSettings } from './hooks/useStoredSettings';
+import { useVerificationData } from './hooks/useVerificationData';
+import { getPreset } from './presets';
+import type { FeedbackPresetId } from './types';
 import type { Language, PracticeCategory } from './types';
 
 export function App() {
   const { settings, setSettings } = useStoredSettings();
+  const verificationData = useVerificationData();
 
   const updateSetting = <Key extends keyof typeof settings>(key: Key, value: (typeof settings)[Key]) => {
     setSettings((current) => ({ ...current, [key]: value }));
@@ -57,6 +62,18 @@ export function App() {
     selectPracticeText(settings.practiceCategory, (settings.practiceTextIndex + 1) % texts.length);
   };
 
+  const applyPreset = (presetId: FeedbackPresetId) => {
+    const preset = getPreset(presetId);
+    setSettings((current) => ({
+      ...current,
+      feedbackPreset: preset.id,
+      feedbackMode: preset.mode,
+      delayMs: preset.delayMs || current.delayMs,
+      feedbackVolume: preset.volume,
+      fafPitchSemitones: preset.fafPitchSemitones,
+    }));
+  };
+
   useEffect(() => {
     document.documentElement.lang = settings.language;
   }, [settings.language]);
@@ -80,12 +97,18 @@ export function App() {
               language={settings.language}
               inputDeviceId={settings.inputDeviceId}
               outputDeviceId={settings.outputDeviceId}
+              feedbackMode={settings.feedbackMode}
+              feedbackPreset={settings.feedbackPreset}
               delayMs={settings.delayMs}
               volume={settings.feedbackVolume}
+              fafPitchSemitones={settings.fafPitchSemitones}
+              outputChannel={settings.outputChannel}
               holdToDafEnabled={settings.holdToDafEnabled}
               holdKeyCode={settings.holdKeyCode}
               formattedHoldKey={inputBinding.formattedHoldKey}
               fadeMs={settings.fadeMs}
+              paceMonitorEnabled={settings.paceMonitorEnabled}
+              paceSensitivity={settings.paceSensitivity}
               isHoldKeyPressed={inputBinding.isHoldKeyPressed}
               isRecordingKey={inputBinding.isRecordingKey}
               hasCompetingKeyWarning={inputBinding.hasCompetingKeyWarning}
@@ -94,11 +117,19 @@ export function App() {
               isGlobalInputMapped={inputBinding.isGlobalInputMapped}
               onDelayChange={(value) => updateSetting('delayMs', value)}
               onVolumeChange={(value) => updateSetting('feedbackVolume', value)}
+              onFeedbackModeChange={(value) => updateSetting('feedbackMode', value)}
+              onPresetChange={(value) => updateSetting('feedbackPreset', value)}
+              onApplyPreset={applyPreset}
+              onFafPitchChange={(value) => updateSetting('fafPitchSemitones', value)}
+              onOutputChannelChange={(value) => updateSetting('outputChannel', value)}
               onHoldToDafEnabledChange={(value) => updateSetting('holdToDafEnabled', value)}
               onFadeChange={(value) => updateSetting('fadeMs', value)}
+              onPaceMonitorEnabledChange={(value) => updateSetting('paceMonitorEnabled', value)}
+              onPaceSensitivityChange={(value) => updateSetting('paceSensitivity', value)}
               onHoldKeyChange={(value) => updateSetting('holdKeyCode', value)}
               onStartKeyRecording={inputBinding.startKeyRecording}
               onCancelKeyRecording={inputBinding.cancelKeyRecording}
+              onUsageLog={verificationData.addUsageLog}
             />
             <PracticeTextPanel
               language={settings.language}
@@ -124,6 +155,14 @@ export function App() {
               language={settings.language}
               inputDeviceId={settings.inputDeviceId}
               outputDeviceId={settings.outputDeviceId}
+            />
+            <VerificationPanel
+              language={settings.language}
+              logs={verificationData.logs}
+              onEvaluationSave={verificationData.addEvaluation}
+              onExportJson={verificationData.exportJson}
+              onExportCsv={verificationData.exportCsv}
+              onClear={verificationData.clearAll}
             />
           </div>
         </div>
